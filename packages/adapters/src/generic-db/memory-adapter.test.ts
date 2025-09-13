@@ -110,6 +110,16 @@ function createTestCluster(id: string, count: number): FailureCluster {
     testId: `test-${id}`,
     testTitle: `Test ${id}`,
     timestamp: new Date().toISOString(),
+    // Added required fields
+    commonFilePaths: [],
+    commonLineNumbers: [],
+    commonCodeSnippets: [],
+    failurePattern: `Common pattern for ${id}`,
+    commonLocators: [],
+    commonMatchers: [],
+    commonTimeouts: [],
+    assertionPattern: `Assertion pattern for ${id}`,
+    // Original fields
     failureIds: Array(count).fill(0).map((_, i) => `failure-${i}`),
     failureTimestamps: Array(count).fill(0).map(() => new Date().toISOString()),
     errorMessages: Array(count).fill(0).map((_, i) => `Error message ${i}`),

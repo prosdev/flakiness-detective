@@ -1,4 +1,6 @@
-import { DataAdapter, EmbeddingProvider, TestFailure, EmbeddedFailure, FailureCluster, FlakinessDetectiveConfig, ClusteringOptions } from './types';
+import { TestFailure, EmbeddedFailure, FailureCluster, FlakinessDetectiveConfig, ClusteringOptions } from './types';
+import { DataAdapter } from './types/data-adapter';
+import { EmbeddingProvider } from './embedding/embedding-provider';
 import { DataAdapterConfig } from './types/data-adapter';
 import { EmbeddingConfig, createRichEmbeddingContext } from './embedding/embedding-provider';
 import { extractPatterns } from './analysis/pattern-detection';

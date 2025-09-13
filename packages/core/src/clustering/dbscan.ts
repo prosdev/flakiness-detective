@@ -39,7 +39,7 @@ export function clusterFailures(
   const timestampStr = new Date().toISOString();
   
   // Build cluster results with context
-  const clusterResults: FailureCluster[] = clusterIndices
+  const clusterResults = clusterIndices
     .map((clusterIndices: number[], clusterId: number) => {
       // Skip clusters that are too small
       if (clusterIndices.length < options.minClusterSize) {
@@ -138,8 +138,8 @@ export function clusterFailures(
         errorMessages,
       };
     })
-    .filter((cluster): cluster is FailureCluster => cluster !== null)
-    .sort((a, b) => b.count - a.count);
+    .filter((cluster) => cluster !== null)
+    .sort((a, b) => (b?.count || 0) - (a?.count || 0)) as FailureCluster[];
 
   return clusterResults;
 }

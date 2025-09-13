@@ -1,6 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { DataAdapter, DataAdapterConfig, TestFailure, FailureCluster } from '@flakiness-detective/core/src/types';
+import { TestFailure, FailureCluster } from '@flakiness-detective/core/src/types';
+import { DataAdapter, DataAdapterConfig } from '@flakiness-detective/core/src/types/data-adapter';
 
 /**
  * File system specific configuration options

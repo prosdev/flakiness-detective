@@ -52,16 +52,16 @@ export interface FailureCluster {
   timestamp: string;
   
   // Pattern analysis
-  commonFilePaths?: string[];
-  commonLineNumbers?: string[];
-  commonCodeSnippets?: string[];
-  failurePattern?: string;
+  commonFilePaths: string[];
+  commonLineNumbers: string[];
+  commonCodeSnippets: string[];
+  failurePattern: string;
   
   // Framework-specific patterns
-  commonLocators?: string[];
-  commonMatchers?: string[];
-  commonTimeouts?: number[];
-  assertionPattern?: string;
+  commonLocators: string[];
+  commonMatchers: string[];
+  commonTimeouts: number[];
+  assertionPattern: string;
   
   // Failures in this cluster
   failureIds: string[];
