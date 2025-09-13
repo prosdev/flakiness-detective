@@ -1,5 +1,4 @@
-import { TestFailure, FailureCluster } from '@flakiness-detective/core/src/types';
-import { DataAdapter } from '@flakiness-detective/core/src/types/data-adapter';
+import { TestFailure, FailureCluster, DataAdapter } from '@flakiness-detective/core';
 
 /**
  * In-memory implementation of DataAdapter for testing

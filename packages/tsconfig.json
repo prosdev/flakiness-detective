@@ -10,7 +10,14 @@
     "strict": true,
     "skipLibCheck": true,
     "declaration": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "baseUrl": "..",
+    "paths": {
+      "@flakiness-detective/core": ["./core/src/index.ts"],
+      "@flakiness-detective/adapters": ["./adapters/src/index.ts"],
+      "@flakiness-detective/visualization": ["./visualization/src/index.ts"],
+      "@flakiness-detective/demo": ["./demo/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "dist"]
 }

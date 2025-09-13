@@ -4,6 +4,22 @@
   "description": "Data source adapters for flakiness detection",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "*": ["./dist/*"]
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc",
     "test": "vitest run",
@@ -16,6 +32,18 @@
   "license": "MIT",
   "dependencies": {
     "@flakiness-detective/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "firebase-admin": "^11.0.0",
+    "@google/generative-ai": "^0.1.0"
+  },
+  "peerDependenciesMeta": {
+    "firebase-admin": {
+      "optional": true
+    },
+    "@google/generative-ai": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@biomejs/biome": "1.5.3",
