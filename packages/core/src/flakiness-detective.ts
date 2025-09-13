@@ -69,7 +69,7 @@ export class FlakinessDetective {
     }
     
     // 2. Extract patterns from failures
-    const enhancedFailures = failures.map(extractPatterns);
+    const enhancedFailures = failures.map(failure => extractPatterns(failure));
     
     // 3. Generate embeddings for failures
     const embeddedFailures = await this.embedFailures(enhancedFailures);
@@ -96,9 +96,9 @@ export class FlakinessDetective {
     // Generate rich context for each failure
     const contexts = failures.map(failure => 
       createRichEmbeddingContext(
-        failure.testTitle,
-        failure.errorMessage,
-        failure.metadata
+        failure?.testTitle || 'Unknown Test',
+        failure?.errorMessage || 'Unknown Error',
+        failure?.metadata || {}
       )
     );
     
