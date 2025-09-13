@@ -1,0 +1,23 @@
+{
+  "name": "flakiness-detective",
+  "version": "0.1.0",
+  "description": "AI-powered test flakiness detection and analysis tool",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "format": "turbo run format",
+    "clean": "turbo run clean",
+    "dev": "turbo run dev"
+  },
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "@biomejs/biome": "1.5.3",
+    "typescript": "^5.3.3",
+    "rimraf": "^5.0.5",
+    "turbo": "^1.11.3"
+  },
+  "packageManager": "pnpm@8.10.0"
+}
