@@ -33,6 +33,7 @@ var/
 htmlcov/
 .pytest_cache/
 .tox/
+coverage/
 
 # IDEs and editors
 .idea/

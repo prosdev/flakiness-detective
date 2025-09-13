@@ -13,7 +13,9 @@
   },
   "typesVersions": {
     "*": {
-      "*": ["./dist/*"]
+      "*": [
+        "./dist/*"
+      ]
     }
   },
   "files": [
@@ -39,6 +41,6 @@
     "@types/node": "^20.10.5",
     "rimraf": "^5.0.5",
     "typescript": "^5.3.3",
-    "vitest": "^1.1.0"
+    "vitest": "^3.2.4"
   }
 }
