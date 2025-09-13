@@ -1,4 +1,12 @@
-import * as dotenv from 'dotenv';
+// For a better development experience, we'll try to use optional imports
+// to avoid breaking the build if dotenv is not installed
+let dotenv: any;
+try {
+  dotenv = require('dotenv');
+} catch (e) {
+  // Dotenv is optional for this demo
+  dotenv = { config: () => {} };
+}
 import { join } from 'path';
 import { existsSync } from 'fs';
 import { 

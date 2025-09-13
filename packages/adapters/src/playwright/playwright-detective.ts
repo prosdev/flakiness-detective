@@ -147,8 +147,14 @@ export function createPlaywrightFlakinessDetective(
     adapter,
     embeddingProvider,
     {
-      clustering: mergedConfig.clustering,
-      timeWindow: mergedConfig.timeWindow
+      clustering: {
+        epsilon: mergedConfig.clustering?.epsilon ?? PLAYWRIGHT_DEFAULTS.clustering!.epsilon!,
+        minPoints: mergedConfig.clustering?.minPoints ?? PLAYWRIGHT_DEFAULTS.clustering!.minPoints!,
+        minClusterSize: mergedConfig.clustering?.minClusterSize ?? PLAYWRIGHT_DEFAULTS.clustering!.minClusterSize!
+      },
+      timeWindow: {
+        days: mergedConfig.timeWindow?.days ?? PLAYWRIGHT_DEFAULTS.timeWindow!.days!
+      }
     }
   );
   

@@ -8,7 +8,7 @@ import { InMemoryAdapter } from '@flakiness-detective/adapters';
 /**
  * Simple mock embedding provider for demonstration
  */
-class DemoEmbeddingProvider implements EmbeddingProvider {
+export class DemoEmbeddingProvider implements EmbeddingProvider {
   /**
    * Generate a simple embedding based on text content
    * This is just for demonstration - a real implementation would use a proper AI model

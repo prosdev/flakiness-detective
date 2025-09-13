@@ -18,6 +18,9 @@
     "@flakiness-detective/adapters": "workspace:*",
     "@flakiness-detective/visualization": "workspace:*"
   },
+  "optionalDependencies": {
+    "dotenv": "^16.3.1"
+  },
   "devDependencies": {
     "@biomejs/biome": "1.5.3",
     "@types/node": "^20.10.5",

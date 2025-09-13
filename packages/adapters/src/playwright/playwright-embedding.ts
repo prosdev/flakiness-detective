@@ -144,16 +144,13 @@ export class PlaywrightEmbeddingProvider implements EmbeddingProvider {
       ...PLAYWRIGHT_EMBEDDING_DEFAULTS,
       ...config,
       selectors: {
-        ...PLAYWRIGHT_EMBEDDING_DEFAULTS.selectors,
-        ...config.selectors
+        weight: config.selectors?.weight ?? PLAYWRIGHT_EMBEDDING_DEFAULTS.selectors!.weight
       },
       timeouts: {
-        ...PLAYWRIGHT_EMBEDDING_DEFAULTS.timeouts,
-        ...config.timeouts
+        weight: config.timeouts?.weight ?? PLAYWRIGHT_EMBEDDING_DEFAULTS.timeouts!.weight
       },
       assertions: {
-        ...PLAYWRIGHT_EMBEDDING_DEFAULTS.assertions,
-        ...config.assertions
+        weight: config.assertions?.weight ?? PLAYWRIGHT_EMBEDDING_DEFAULTS.assertions!.weight
       }
     };
   }
