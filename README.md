@@ -97,6 +97,8 @@ console.log(`Found ${clusters.length} flaky test patterns`);
 
 ### File System Adapter
 
+Store and retrieve data from the local file system:
+
 ```typescript
 import { FileSystemAdapter } from '@flakiness-detective/adapters';
 
@@ -107,11 +109,56 @@ const fsAdapter = new FileSystemAdapter({
 
 ### In-Memory Adapter
 
+Store data in memory (useful for testing):
+
 ```typescript
 import { InMemoryAdapter } from '@flakiness-detective/adapters';
 
 const memoryAdapter = new InMemoryAdapter();
 ```
+
+### Firestore Adapter
+
+Store and retrieve data from Google Cloud Firestore:
+
+```typescript
+import { createFirestoreAdapter } from '@flakiness-detective/adapters';
+
+const firestoreAdapter = createFirestoreAdapter({
+  projectId: 'your-google-cloud-project-id',
+  failuresCollection: 'test_failures',
+  clustersCollection: 'flaky_clusters',
+  // Optional: specify a custom credentials path
+  credentialsPath: './service-account-key.json'
+});
+```
+
+### Google Integration
+
+Simplified integration with Google Cloud and GenAI:
+
+```typescript
+import { createGoogleCloudDetective } from '@flakiness-detective/adapters';
+
+const detective = createGoogleCloudDetective({
+  projectId: 'your-google-cloud-project-id',
+  apiKey: 'your-google-api-key',
+  storage: {
+    failuresCollection: 'test_failures',
+    clustersCollection: 'flaky_clusters'
+  }
+});
+
+const clusters = await detective.detect();
+```
+
+## Examples
+
+For more detailed examples, check the [examples](./examples/) directory:
+
+- [Firestore Integration](./examples/firestore-adapter.ts)
+- [Google Cloud Integration](./packages/demo/src/google-integration-example/index.ts)
+- [Playwright Integration](./packages/demo/src/playwright-example/index.ts)
 
 ## License
 
