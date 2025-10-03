@@ -1,6 +1,6 @@
 {
   "name": "flakiness-detective",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "AI-powered test flakiness detection and analysis tool",
   "private": false,
   "scripts": {
@@ -28,5 +28,34 @@
     "typescript": "^5.3.3",
     "vitest": "^3.2.4"
   },
-  "packageManager": "pnpm@8.10.0"
+  "packageManager": "pnpm@8.10.0",
+  "main": "packages/adapters/dist/index.js",
+  "types": "packages/adapters/dist/index.d.ts",
+  "files": [
+    "packages/*/dist",
+    "README.md",
+    "CONTRIBUTING.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "types": "./packages/adapters/dist/index.d.ts",
+      "import": "./packages/adapters/dist/index.js",
+      "require": "./packages/adapters/dist/index.js"
+    },
+    "./core": {
+      "types": "./packages/core/dist/index.d.ts",
+      "import": "./packages/core/dist/index.js",
+      "require": "./packages/core/dist/index.js"
+    },
+    "./adapters": {
+      "types": "./packages/adapters/dist/index.d.ts",
+      "import": "./packages/adapters/dist/index.js",
+      "require": "./packages/adapters/dist/index.js"
+    }
+  },
+  "dependencies": {
+    "@flakiness-detective/adapters": "0.1.1",
+    "@flakiness-detective/core": "0.1.1"
+  }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@flakiness-detective/adapters",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Data source adapters for flakiness detection",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
