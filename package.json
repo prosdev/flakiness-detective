@@ -2,7 +2,7 @@
   "name": "flakiness-detective",
   "version": "0.1.0",
   "description": "AI-powered test flakiness detection and analysis tool",
-  "private": true,
+  "private": false,
   "scripts": {
     "build": "turbo run build",
     "test": "vitest run",
