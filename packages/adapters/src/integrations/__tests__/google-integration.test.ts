@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { 
   createGoogleCloudDetective, 
   createGooglePlaywrightDetective, 
-  createLyticsCompatibleDetective,
+  createSimplifiedDetective,
   GOOGLE_CLOUD_DEFAULTS,
   GOOGLE_PLAYWRIGHT_DEFAULTS
 } from '../google-integration';
@@ -282,8 +282,8 @@ describe('Google Cloud Integration', () => {
     });
   });
 
-  describe('createLyticsCompatibleDetective', () => {
-    it('should create a detective configured for Lytics E2E Dashboard', () => {
+  describe('createSimplifiedDetective', () => {
+    it('should create a detective with simplified configuration', () => {
       // Create mock objects for dependencies
       const mockAdapter = { type: 'adapter' };
       const mockProvider = { type: 'provider' };
@@ -295,25 +295,24 @@ describe('Google Cloud Integration', () => {
       vi.mocked(createFlakinessDetective).mockReturnValue(mockDetective as any);
       
       const config = {
-        googleProjectId: 'lytics-project',
-        googleApiKey: 'lytics-api-key'
+        projectId: 'test-project',
+        apiKey: 'test-api-key'
       };
 
-      const detective = createLyticsCompatibleDetective(config);
+      const detective = createSimplifiedDetective(config);
 
-      // Verify the detective was created with Lytics-specific configuration
+      // Verify the detective was created with simplified configuration
       expect(createFirestoreAdapter).toHaveBeenCalledWith(expect.objectContaining({
-        projectId: 'lytics-project',
-        failuresCollection: 'individual_test_runs',
-        clustersCollection: 'flaky_clusters',
-        failureStatusFilter: 'failed'
+        projectId: 'test-project',
+        failuresCollection: 'test_failures',
+        clustersCollection: 'flaky_clusters'
       }));
 
       // Verify a detective instance is returned
       expect(detective).toBeDefined();
     });
 
-    it('should use custom Lytics configuration when provided', () => {
+    it('should use custom simplified configuration when provided', () => {
       // Create mock objects for dependencies
       const mockAdapter = { type: 'adapter' };
       const mockProvider = { type: 'provider' };
@@ -323,17 +322,17 @@ describe('Google Cloud Integration', () => {
       vi.mocked(createGoogleGenAIProvider).mockReturnValueOnce(mockProvider as any);
       
       const config = {
-        googleProjectId: 'lytics-project',
-        googleApiKey: 'lytics-api-key',
+        projectId: 'test-project',
+        apiKey: 'test-api-key',
         failuresCollection: 'custom_test_runs',
         clustersCollection: 'custom_clusters',
         timeWindowDays: 30,
         failureStatusFilter: 'error'
       };
 
-      createLyticsCompatibleDetective(config);
+      createSimplifiedDetective(config);
 
-      // Verify the detective was created with custom Lytics configuration
+      // Verify the detective was created with custom simplified configuration
       expect(createFirestoreAdapter).toHaveBeenCalledWith(expect.objectContaining({
         failuresCollection: 'custom_test_runs',
         clustersCollection: 'custom_clusters',
@@ -348,6 +347,33 @@ describe('Google Cloud Integration', () => {
           timeWindow: { days: 30 }
         })
       );
+    });
+    
+    it('should support customQueryFn option', () => {
+      // Create mock objects for dependencies
+      const mockAdapter = { type: 'adapter' };
+      const mockProvider = { type: 'provider' };
+      
+      // Set up the mocks to return our test objects
+      vi.mocked(createFirestoreAdapter).mockReturnValueOnce(mockAdapter as any);
+      vi.mocked(createGoogleGenAIProvider).mockReturnValueOnce(mockProvider as any);
+      
+      // Create a mock custom query function
+      const customQueryFn = vi.fn().mockResolvedValue([]);
+      
+      const config = {
+        projectId: 'test-project',
+        apiKey: 'test-api-key',
+        customQueryFn
+      };
+
+      createSimplifiedDetective(config);
+
+      // Verify the detective was created with customQueryFn
+      expect(createFirestoreAdapter).toHaveBeenCalledWith(expect.objectContaining({
+        projectId: 'test-project',
+        customQueryFn
+      }));
     });
   });
 });

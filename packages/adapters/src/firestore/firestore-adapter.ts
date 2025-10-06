@@ -21,6 +21,17 @@ export interface FirestoreAdapterConfig extends DataAdapterConfig {
   
   /** Custom credential path (optional) */
   credentialsPath?: string;
+  
+  /** 
+   * Custom query function for fetching failures
+   * This allows users to define their own query logic to match their database structure
+   * and avoid requiring specific indexes
+   */
+  customQueryFn?: (
+    db: any, 
+    collection: string, 
+    days: number
+  ) => Promise<any[]>;
 }
 
 /**
@@ -33,6 +44,7 @@ export class FirestoreAdapter implements DataAdapter {
   private failuresCollection: string;
   private clustersCollection: string;
   private failureStatusFilter?: string;
+  private customQueryFn?: (db: any, collection: string, days: number) => Promise<any[]>;
   
   /**
    * Create a new Firestore adapter
@@ -89,6 +101,7 @@ export class FirestoreAdapter implements DataAdapter {
     this.failuresCollection = config.failuresCollection || 'test_failures';
     this.clustersCollection = config.clustersCollection || 'flaky_clusters';
     this.failureStatusFilter = config.failureStatusFilter;
+    this.customQueryFn = config.customQueryFn;
   }
   
   /**
@@ -99,66 +112,59 @@ export class FirestoreAdapter implements DataAdapter {
    */
   async fetchFailures(days: number): Promise<TestFailure[]> {
     try {
-      // Calculate cutoff date
-      const cutoff = new Date();
-      cutoff.setDate(cutoff.getDate() - days);
-      
-      // Build query
-      let query = this.db.collection(this.failuresCollection)
-        .where('timestamp', '>=', cutoff);
-      
-      // Add status filter if configured
-      if (this.failureStatusFilter) {
-        query = query.where('status', '==', this.failureStatusFilter);
-      }
-      
-      // Execute query
-      const snapshot = await query.get();
-      
       // Process results
       const failures: TestFailure[] = [];
       
-      snapshot.forEach((doc: any) => {
-        const data = doc.data();
+      // Use custom query function if provided, otherwise use default query
+      if (this.customQueryFn) {
+        // Execute custom query function
+        const documents = await this.customQueryFn(this.db, this.failuresCollection, days);
         
-        // Handle Firestore timestamps
-        const timestamp = data.timestamp instanceof Date ? 
-          data.timestamp.toISOString() : 
-          (data.timestamp?.toDate ? data.timestamp.toDate().toISOString() : new Date().toISOString());
+        // Process results from custom query
+        documents.forEach((doc: any) => {
+          const data = doc.data ? doc.data() : doc;
+          
+          // Handle Firestore timestamps
+          const timestamp = data.timestamp instanceof Date ? 
+            data.timestamp.toISOString() : 
+            (data.timestamp?.toDate ? data.timestamp.toDate().toISOString() : new Date().toISOString());
+          
+          // Map Firestore document to TestFailure
+          const failure: TestFailure = this.mapDocumentToFailure(doc.id || data.id, data, timestamp);
+          failures.push(failure);
+        });
+      } else {
+        // Default query logic
+        // Calculate cutoff date
+        const cutoff = new Date();
+        cutoff.setDate(cutoff.getDate() - days);
         
-        // Map Firestore document to TestFailure
-        const failure: TestFailure = {
-          id: doc.id,
-          testId: data.testId || data.id || doc.id,
-          testTitle: data.testTitle || data.title || 'Unknown Test',
-          errorMessage: data.errorMessage || data.error || '',
-          timestamp,
-          metadata: {
-            // Process any metadata fields
-            ...(data.metadata || {}),
-            
-            // Common fields that might be at the root level
-            projectName: data.projectName || data.project,
-            suite: data.suite,
-            filePath: data.filePath || data.file,
-            lineNumber: data.lineNumber || data.line,
-            actualValue: data.actualValue || data.actual,
-            expectedValue: data.expectedValue || data.expected,
-            locator: data.locator,
-            matcher: data.matcher,
-            timeoutMs: data.timeoutMs || data.timeout,
-            
-            // Additional fields
-            reportLink: data.reportLink,
-            runId: data.runId,
-            
-            // Extract error snippets if available
-            errorSnippets: data.errorSnippets || this.extractErrorSnippets(data.errorMessage || data.error || '')
-          }
-        };
+        // Build query
+        let query = this.db.collection(this.failuresCollection)
+          .where('timestamp', '>=', cutoff);
         
-        failures.push(failure);
-      });
+        // Add status filter if configured
+        if (this.failureStatusFilter) {
+          query = query.where('status', '==', this.failureStatusFilter);
+        }
+        
+        // Execute query
+        const snapshot = await query.get();
+        
+        // Process results from default query
+        snapshot.forEach((doc: any) => {
+          const data = doc.data();
+          
+          // Handle Firestore timestamps
+          const timestamp = data.timestamp instanceof Date ? 
+            data.timestamp.toISOString() : 
+            (data.timestamp?.toDate ? data.timestamp.toDate().toISOString() : new Date().toISOString());
+          
+          // Map Firestore document to TestFailure
+          const failure: TestFailure = this.mapDocumentToFailure(doc.id, data, timestamp);
+          failures.push(failure);
+        });
+      }
       
       return failures;
     } catch (error) {
@@ -316,6 +322,46 @@ export class FirestoreAdapter implements DataAdapter {
     const codeSnippets = lines.filter(line => line.trim().startsWith('>'));
     
     return codeSnippets.length > 0 ? codeSnippets : [];
+  }
+  
+  /**
+   * Map a Firestore document to a TestFailure object
+   * 
+   * @param docId Document ID
+   * @param data Document data
+   * @param timestamp Formatted timestamp
+   * @returns Mapped TestFailure object
+   */
+  private mapDocumentToFailure(docId: string, data: any, timestamp: string): TestFailure {
+    return {
+      id: docId,
+      testId: data.testId || data.id || docId,
+      testTitle: data.testTitle || data.title || 'Unknown Test',
+      errorMessage: data.errorMessage || data.error || '',
+      timestamp,
+      metadata: {
+        // Process any metadata fields
+        ...(data.metadata || {}),
+        
+        // Common fields that might be at the root level
+        projectName: data.projectName || data.project,
+        suite: data.suite,
+        filePath: data.filePath || data.file,
+        lineNumber: data.lineNumber || data.line,
+        actualValue: data.actualValue || data.actual,
+        expectedValue: data.expectedValue || data.expected,
+        locator: data.locator,
+        matcher: data.matcher,
+        timeoutMs: data.timeoutMs || data.timeout,
+        
+        // Additional fields
+        reportLink: data.reportLink,
+        runId: data.runId,
+        
+        // Extract error snippets if available
+        errorSnippets: data.errorSnippets || this.extractErrorSnippets(data.errorMessage || data.error || '')
+      }
+    };
   }
 }
 

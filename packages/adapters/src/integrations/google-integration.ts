@@ -197,35 +197,41 @@ export function createGooglePlaywrightDetective(config: GooglePlaywrightConfig) 
 }
 
 /**
- * Create Flakiness Detective configured for Lytics E2E Dashboard compatibility
+ * Create Flakiness Detective with simplified configuration
  * 
- * This is a direct replacement for the custom implementation in Lytics E2E Dashboard
+ * This provides a simpler interface for creating a Flakiness Detective with common defaults
  * 
  * @param options Simple configuration options
  * @returns Configured Flakiness Detective instance
  */
-export function createLyticsCompatibleDetective({
-  googleProjectId,
-  googleApiKey,
-  failuresCollection = 'individual_test_runs',
+export function createSimplifiedDetective({
+  projectId,
+  apiKey,
+  failuresCollection = 'test_failures',
   clustersCollection = 'flaky_clusters',
   timeWindowDays = 7,
-  failureStatusFilter = 'failed'
+  failureStatusFilter,
+  firestoreInstance,
+  customQueryFn
 }: {
-  googleProjectId: string;
-  googleApiKey: string;
+  projectId: string;
+  apiKey: string;
   failuresCollection?: string;
   clustersCollection?: string;
   timeWindowDays?: number;
   failureStatusFilter?: string;
+  firestoreInstance?: any;
+  customQueryFn?: (db: any, collection: string, days: number) => Promise<any[]>;
 }) {
   return createGoogleCloudDetective({
-    projectId: googleProjectId,
-    apiKey: googleApiKey,
+    projectId,
+    apiKey,
     storage: {
       failuresCollection,
       clustersCollection,
-      failureStatusFilter
+      failureStatusFilter,
+      firestoreInstance,
+      customQueryFn
     },
     detective: {
       timeWindow: {

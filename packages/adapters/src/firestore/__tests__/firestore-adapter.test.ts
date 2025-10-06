@@ -210,7 +210,8 @@ describe('FirestoreAdapter', () => {
     config = {
       projectId: 'test-project',
       failuresCollection: 'test_failures',
-      clustersCollection: 'flaky_clusters'
+      clustersCollection: 'flaky_clusters',
+      customQueryFn: undefined
     };
 
     // Setup mock query results for fetchFailures
@@ -390,9 +391,113 @@ describe('FirestoreAdapter', () => {
       expect((adapter as any).failuresCollection).toBe('custom_failures');
       expect((adapter as any).clustersCollection).toBe('custom_clusters');
     });
+    
+    it('should initialize with customQueryFn if provided', () => {
+      // Create a mock Firestore instance
+      const mockFirestore = {
+        collection: vi.fn(),
+        batch: vi.fn(),
+        Timestamp: { now: vi.fn(), fromDate: vi.fn() }
+      };
+      
+      const customQueryFn = vi.fn();
+      
+      const adapter = new FirestoreAdapter({
+        projectId: 'test-project',
+        firestoreInstance: mockFirestore,
+        customQueryFn
+      });
+
+      // Access private properties for testing
+      expect((adapter as any).customQueryFn).toBe(customQueryFn);
+    });
   });
 
   describe('fetchFailures', () => {
+    it('should use customQueryFn when provided', async () => {
+      // Arrange
+      const customQueryFn = vi.fn().mockResolvedValue([
+        {
+          id: 'custom-failure-1',
+          data: () => ({
+            testId: 'test-custom',
+            testTitle: 'Custom Query Test',
+            errorMessage: 'Custom error message',
+            timestamp: new Date('2023-03-01T00:00:00Z')
+          })
+        }
+      ]);
+      
+      const adapterWithCustomQuery = new MockFirestoreAdapter({
+        ...config,
+        customQueryFn
+      });
+      
+      // Act
+      const failures = await adapterWithCustomQuery.fetchFailures(7);
+      
+      // Assert
+      expect(customQueryFn).toHaveBeenCalledWith(
+        expect.anything(),
+        'test_failures',
+        7
+      );
+      expect(failures).toHaveLength(1);
+      expect(failures[0].id).toBe('custom-failure-1');
+      expect(failures[0].testId).toBe('test-custom');
+      expect(failures[0].testTitle).toBe('Custom Query Test');
+      expect(failures[0].errorMessage).toBe('Custom error message');
+      expect(failures[0].timestamp).toBe('2023-03-01T00:00:00.000Z');
+    });
+
+    it('should handle errors from customQueryFn', async () => {
+      // Arrange
+      const customQueryFn = vi.fn().mockRejectedValue(new Error('Custom query error'));
+      
+      const adapterWithCustomQuery = new MockFirestoreAdapter({
+        ...config,
+        customQueryFn
+      });
+      
+      // Act & Assert
+      await expect(adapterWithCustomQuery.fetchFailures(7))
+        .rejects
+        .toThrow('Failed to fetch failures from Firestore: Error: Custom query error');
+      
+      expect(customQueryFn).toHaveBeenCalledWith(
+        expect.anything(),
+        'test_failures',
+        7
+      );
+    });
+
+    it('should handle different document formats from customQueryFn', async () => {
+      // Arrange - return documents without data() method
+      const customQueryFn = vi.fn().mockResolvedValue([
+        {
+          id: 'direct-doc-1',
+          testId: 'test-direct',
+          testTitle: 'Direct Document Test',
+          errorMessage: 'Direct document error',
+          timestamp: new Date('2023-04-01T00:00:00Z')
+        }
+      ]);
+      
+      const adapterWithCustomQuery = new MockFirestoreAdapter({
+        ...config,
+        customQueryFn
+      });
+      
+      // Act
+      const failures = await adapterWithCustomQuery.fetchFailures(7);
+      
+      // Assert
+      expect(failures).toHaveLength(1);
+      expect(failures[0].id).toBe('direct-doc-1');
+      expect(failures[0].testId).toBe('test-direct');
+      expect(failures[0].timestamp).toBe('2023-04-01T00:00:00.000Z');
+    });
+
     it('should handle empty results', async () => {
       // Arrange - change the mock to return empty results
       const emptyQueryResult = {

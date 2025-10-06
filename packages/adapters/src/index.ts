@@ -1,5 +1,11 @@
 // Main exports for adapters package
 
+// Re-export renamed exports for backward compatibility
+import { createSimplifiedDetective } from './integrations/google-integration';
+export { createSimplifiedDetective };
+// Temporarily export for backward compatibility
+export const createLyticsCompatibleDetective = createSimplifiedDetective;
+
 // File system adapter
 export * from './file-system/file-system-adapter';
 
