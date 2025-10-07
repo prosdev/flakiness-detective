@@ -51,7 +51,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@flakiness-detective/core": "^0.2.0"
+    "@flakiness-detective/core": "workspace:*"
   },
   "peerDependencies": {
     "@google/generative-ai": "^0.1.0",

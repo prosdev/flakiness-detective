@@ -23,7 +23,7 @@ export interface GoogleGenAIConfig extends EmbeddingConfig {
 export const GOOGLE_GENAI_DEFAULTS: Partial<GoogleGenAIConfig> = {
   modelName: "embedding-001",
   taskType: "CLUSTERING",
-  dimensions: 768, // Default for embedding-001 model
+  dimensions: 768 // Default for embedding-001 model
 };
 
 /**

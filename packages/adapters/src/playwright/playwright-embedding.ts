@@ -24,13 +24,13 @@ export const PLAYWRIGHT_EMBEDDING_DEFAULTS: PlaywrightEmbeddingConfig = {
   dimensions: 768,
   modelName: 'default',
   selectors: {
-    weight: 2.0,  // Emphasize selectors as they're common flakiness sources
+    weight: 2.0  // Emphasize selectors as they're common flakiness sources
   },
   timeouts: {
-    weight: 1.5,  // Emphasize timeouts as they're common flakiness sources
+    weight: 1.5  // Emphasize timeouts as they're common flakiness sources
   },
   assertions: {
-    weight: 1.8,  // Emphasize assertion patterns
+    weight: 1.8  // Emphasize assertion patterns
   }
 };
 
