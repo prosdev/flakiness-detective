@@ -29,25 +29,15 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      # Build core package types explicitly first
-      - name: Build Core Types
+      # Build core package first to ensure declarations are available
+      - name: Build Core Package
         run: |
-          echo "Building core package types..."
           cd packages/core
-          
-          # Ensure dist directory exists
-          mkdir -p dist
-          
-          # Generate declaration files
-          pnpm exec tsc --project tsconfig.json --declaration --emitDeclarationOnly --outDir ./dist
-          
-          # Verify files were created
-          echo "Core types built successfully. Contents of dist directory:"
-          ls -la dist
+          pnpm build
 
-      # Now build all packages - core will be skipped as it's already in Turbo's cache
-      - name: Build All Packages
-        run: pnpm build
+      # Build remaining packages, excluding core which is already built
+      - name: Build Remaining Packages
+        run: pnpm build --filter=!@flakiness-detective/core
 
   test:
     name: Lint and Test
