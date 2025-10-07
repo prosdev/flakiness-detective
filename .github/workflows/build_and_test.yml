@@ -29,18 +29,23 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      # Build core package first to ensure declarations are available
+      # Build core package first
       - name: Build Core Package
         run: |
+          echo "Building core package..."
           cd packages/core
+          pnpm clean
           pnpm build
+          echo "Core package built successfully. Contents of dist directory:"
+          ls -la dist
 
       # Build the adapters package next which depends on core
       - name: Build Adapters Package
         run: |
+          echo "Building adapters package..."
           cd packages/adapters
           pnpm build
-          
+
       - name: Build Visualization Package
         run: |
           echo "Building visualization package..."
