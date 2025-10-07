@@ -29,7 +29,10 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build
+      - name: Build Core Package First
+        run: cd packages/core && pnpm build
+
+      - name: Build All Packages
         run: pnpm build
 
       - name: TypeCheck

@@ -5,6 +5,9 @@ import { PlaywrightFailureMetadata } from './playwright-adapter';
  * Configuration for Playwright-specific embedding
  */
 export interface PlaywrightEmbeddingConfig extends EmbeddingConfig {
+  // Dimensions for embedding vectors
+  dimensions?: number;
+
   // Playwright-specific weighting for embeddings
   selectors?: {
     weight: number;  // How much importance to give selectors (default: 2.0)

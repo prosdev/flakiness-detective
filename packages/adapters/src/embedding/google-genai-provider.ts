@@ -13,6 +13,9 @@ export interface GoogleGenAIConfig extends EmbeddingConfig {
   /** Task type for embedding (default: 'SEMANTIC_SIMILARITY') */
   taskType?: "SEMANTIC_SIMILARITY" | "CLASSIFICATION" | "CLUSTERING";
 
+  /** Dimensions for embedding vectors */
+  dimensions?: number;
+
   /** Custom instance of the Google Generative AI client */
   genAIInstance?: any;
 }
