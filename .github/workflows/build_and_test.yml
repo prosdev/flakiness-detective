@@ -29,33 +29,15 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      # Build core package first with explicit TypeScript parameters
+      # Build packages in order
       - name: Build Core Package
         run: |
           echo "Building core package..."
           cd packages/core
-          
-          # Clean the dist directory
           rm -rf dist
-          mkdir -p dist
-          
-          # Show TypeScript version
-          echo "TypeScript version:"
-          pnpm exec tsc --version
-          
-          # Run TypeScript with explicit parameters and diagnostics
-          echo "Building with explicit TypeScript parameters..."
-          pnpm exec tsc --project tsconfig.json --declaration --outDir ./dist --rootDir ./src --diagnostics --noEmit false --listEmittedFiles
-          
-          # If compilation succeeded but no files were generated, try building with the build script
-          if [ ! "$(ls -A dist)" ]; then
-            echo "TypeScript compiler succeeded but no files were emitted, trying with build script..."
-            pnpm build
-          fi
-          
-          # Check if build was successful
-          echo "Contents of dist directory:"
-          ls -la dist || echo "dist directory not found or empty"
+          pnpm run build
+          echo "Files generated in core package:"
+          find dist -type f | sort || echo "No files found in dist directory"
 
       # Build the adapters package next which depends on core
       - name: Build Adapters Package
