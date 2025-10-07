@@ -12,6 +12,8 @@ import {
  * Playwright-specific test failure metadata
  */
 export interface PlaywrightFailureMetadata {
+  [key: string]: unknown;
+
   // Test details
   projectName: string;
   testFile: string;

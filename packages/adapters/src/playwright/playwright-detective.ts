@@ -160,17 +160,17 @@ export function createPlaywrightFlakinessDetective(
     clustering: {
       epsilon:
         mergedConfig.clustering?.epsilon ??
-        PLAYWRIGHT_DEFAULTS.clustering!.epsilon!,
+        (PLAYWRIGHT_DEFAULTS.clustering?.epsilon ?? 0.3),
       minPoints:
         mergedConfig.clustering?.minPoints ??
-        PLAYWRIGHT_DEFAULTS.clustering!.minPoints!,
+        (PLAYWRIGHT_DEFAULTS.clustering?.minPoints ?? 2),
       minClusterSize:
         mergedConfig.clustering?.minClusterSize ??
-        PLAYWRIGHT_DEFAULTS.clustering!.minClusterSize!,
+        (PLAYWRIGHT_DEFAULTS.clustering?.minClusterSize ?? 2),
     },
     timeWindow: {
       days:
-        mergedConfig.timeWindow?.days ?? PLAYWRIGHT_DEFAULTS.timeWindow!.days!,
+        mergedConfig.timeWindow?.days ?? (PLAYWRIGHT_DEFAULTS.timeWindow?.days ?? 7),
     },
   });
 

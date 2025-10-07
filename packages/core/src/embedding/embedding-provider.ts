@@ -33,7 +33,7 @@ export interface EmbeddingConfig {
   apiKey?: string;
   endpoint?: string;
   // Additional provider-specific options
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
@@ -60,7 +60,7 @@ export const DEFAULT_EMBEDDING_CONFIG: EmbeddingConfig = {
 export function createRichEmbeddingContext(
   title: string,
   errorMessage: string,
-  metadata: Record<string, any> = {}
+  metadata: Record<string, unknown> = {}
 ): string {
   // Create rich context with emphasis on code snippets and file locations
   const richContext = [
@@ -75,8 +75,8 @@ export function createRichEmbeddingContext(
     metadata.actualValue ? `Actual: "${metadata.actualValue}"` : '',
     metadata.expectedValue ? `Expected: "${metadata.expectedValue}"` : '',
     metadata.timeoutMs ? `Timeout: ${metadata.timeoutMs}ms` : '',
-    metadata.errorSnippets && metadata.errorSnippets.length > 0
-      ? `Code:\n${metadata.errorSnippets.join('\n')}`
+    Array.isArray(metadata.errorSnippets) && metadata.errorSnippets.length > 0
+      ? `Code:\n${(metadata.errorSnippets as string[]).join('\n')}`
       : '',
     `Error: ${errorMessage}`,
   ]

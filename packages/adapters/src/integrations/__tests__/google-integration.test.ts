@@ -72,7 +72,6 @@ vi.mock('../../playwright/playwright-embedding', () => {
 
 vi.mock('../../playwright/playwright-adapter', () => ({
   PlaywrightAdapter: class MockPlaywrightAdapter {
-    constructor() {}
     processPlaywrightResults = vi.fn()
   },
   createPlaywrightAdapter: vi.fn().mockReturnValue({
@@ -82,7 +81,6 @@ vi.mock('../../playwright/playwright-adapter', () => ({
 
 vi.mock('../../playwright/playwright-detective', () => ({
   PlaywrightFlakinessDetective: class MockPlaywrightFlakinessDetective {
-    constructor() {}
     processResults = vi.fn()
   },
   createPlaywrightFlakinessDetective: vi.fn(),

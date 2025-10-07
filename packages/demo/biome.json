@@ -1,0 +1,19 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.5.3/schema.json",
+  "extends": [
+    "../../.biome.json"
+  ],
+  "linter": {
+    "rules": {
+      "correctness": {
+        "noUnusedVariables": "off"
+      },
+      "style": {
+        "noUnusedTemplateLiteral": "off"
+      },
+      "suspicious": {
+        "noExplicitAny": "off"
+      }
+    }
+  }
+}

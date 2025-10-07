@@ -1,3 +1,4 @@
+// Tests for PlaywrightAdapter functionality
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { TestFailure } from '@flakiness-detective/core';
 import { PlaywrightAdapter, PlaywrightTestResult } from '../playwright-adapter';
@@ -234,7 +235,7 @@ describe('PlaywrightAdapter', () => {
       ];
       
       // Test each phrase
-      matcherPhrases.forEach(({ message, matcher }) => {
+      for (const { message, matcher } of matcherPhrases) {
         const testResult: PlaywrightTestResult = {
           testId: 'matcher-test',
           title: 'Test for extracting matchers',
@@ -244,7 +245,7 @@ describe('PlaywrightAdapter', () => {
         
         const metadata = (adapter as any).extractPlaywrightMetadata(testResult);
         expect(metadata.matcher).toBe(matcher);
-      });
+      }
     });
     
     it('should not include snippets when config.includeSnippets is false', () => {

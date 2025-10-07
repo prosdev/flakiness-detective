@@ -1,3 +1,4 @@
+// Tests for GoogleGenAIProvider functionality
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { GoogleGenAIProvider, GOOGLE_GENAI_DEFAULTS } from '../google-genai-provider';
 

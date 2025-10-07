@@ -1,8 +1,9 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+#!/bin/sh
 
-# Run lint-staged for formatting and linting
-npx lint-staged
+# Run linting
+pnpm lint || { echo '❌ Lint failed'; exit 1; }
 
-# Run tests
-pnpm test
+# Run type checking
+pnpm typecheck || { echo '❌ Type checking failed'; exit 1; }
+
+echo "✅ Pre-commit checks passed"

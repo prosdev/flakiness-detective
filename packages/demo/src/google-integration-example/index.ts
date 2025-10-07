@@ -283,7 +283,7 @@ async function runLyticsCompatibleDemo() {
   console.log(
     "Lytics-compatible detective created with the following configuration:"
   );
-  console.log("- Google Cloud project: " + process.env.GOOGLE_CLOUD_PROJECT_ID);
+  console.log(`- Google Cloud project: ${process.env.GOOGLE_CLOUD_PROJECT_ID}`);
   console.log("- Failures collection: individual_test_runs");
   console.log("- Clusters collection: flaky_clusters");
   console.log("- Time window: 7 days");

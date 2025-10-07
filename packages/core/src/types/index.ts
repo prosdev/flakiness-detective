@@ -18,6 +18,8 @@ export interface TestFailure {
  * Metadata extracted from a test failure
  */
 export interface TestFailureMetadata {
+  [key: string]: unknown;
+
   // Error context
   errorSnippets?: string[];
   lineNumber?: string;

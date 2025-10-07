@@ -155,13 +155,13 @@ function findCommonElements<T>(elements: T[], thresholdCount: number): T[] {
   const counts: Record<string, { count: number, value: T }> = {};
   
   // Count occurrences
-  elements.forEach(element => {
+  for (const element of elements) {
     const key = String(element);
     if (!counts[key]) {
       counts[key] = { count: 0, value: element };
     }
     counts[key].count++;
-  });
+  }
   
   // Filter elements that appear frequently enough
   return Object.values(counts)

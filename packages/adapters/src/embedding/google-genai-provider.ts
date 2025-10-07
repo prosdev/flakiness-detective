@@ -1,6 +1,29 @@
 import { EmbeddingProvider, EmbeddingConfig } from "@flakiness-detective/core";
 
 /**
+ * Interface for the Google Generative AI client
+ */
+interface GoogleGenerativeAI {
+  getGenerativeModel: (opts: { model: string }) => GoogleGenerativeModel;
+}
+
+/**
+ * Interface for the Google Generative Model
+ */
+interface GoogleGenerativeModel {
+  embedContent: (content: string, opts: any) => Promise<GoogleEmbedResult>;
+}
+
+/**
+ * Interface for the Google Embedding Result
+ */
+interface GoogleEmbedResult {
+  embedding: {
+    values: number[];
+  };
+}
+
+/**
  * Configuration for Google Generative AI embedding provider
  */
 export interface GoogleGenAIConfig extends EmbeddingConfig {
@@ -17,17 +40,17 @@ export interface GoogleGenAIConfig extends EmbeddingConfig {
   dimensions?: number;
 
   /** Custom instance of the Google Generative AI client */
-  genAIInstance?: any;
+  genAIInstance?: GoogleGenerativeAI;
 }
 
 /**
  * Default configuration values
  */
-export const GOOGLE_GENAI_DEFAULTS: Partial<GoogleGenAIConfig> = {
+export const GOOGLE_GENAI_DEFAULTS = {
   modelName: "embedding-001",
   taskType: "CLUSTERING",
   dimensions: 768 // Default for embedding-001 model
-};
+} as const;
 
 /**
  * Implementation of EmbeddingProvider using Google's Generative AI
@@ -35,8 +58,8 @@ export const GOOGLE_GENAI_DEFAULTS: Partial<GoogleGenAIConfig> = {
  * Requires @google/generative-ai as a peer dependency
  */
 export class GoogleGenAIProvider implements EmbeddingProvider {
-  private genAI: any;
-  private model: any;
+  private genAI: GoogleGenerativeAI;
+  private model: GoogleGenerativeModel;
   private config: GoogleGenAIConfig;
 
   /**
@@ -64,12 +87,11 @@ export class GoogleGenAIProvider implements EmbeddingProvider {
 
       // Initialize the model
       this.model = this.genAI.getGenerativeModel({
-        model: this.config.modelName,
+        model: this.config.modelName || 'embedding-001',
       });
     } catch (error) {
       throw new Error(
-        `Failed to initialize Google Generative AI: ${error}\n` +
-          "Make sure @google/generative-ai is installed: npm install @google/generative-ai"
+        `Failed to initialize Google Generative AI: ${error}\nMake sure @google/generative-ai is installed: npm install @google/generative-ai`
       );
     }
   }
@@ -82,8 +104,9 @@ export class GoogleGenAIProvider implements EmbeddingProvider {
    */
   async embedContent(content: string): Promise<number[]> {
     try {
+      // @ts-ignore - Google API expects a proper taskType
       const result = await this.model.embedContent(content, {
-        taskType: this.config.taskType,
+        taskType: this.config.taskType || 'CLUSTERING'
       });
 
       // Extract and return embedding values

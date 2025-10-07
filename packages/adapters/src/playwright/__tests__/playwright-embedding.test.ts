@@ -64,7 +64,7 @@ describe('PlaywrightEmbeddingProvider', () => {
       // Access private property for testing
       const config = (provider as any).config;
       
-      expect(config.selectors.weight).toBe(PLAYWRIGHT_EMBEDDING_DEFAULTS.selectors!.weight);
+      expect(config.selectors.weight).toBe(PLAYWRIGHT_EMBEDDING_DEFAULTS.selectors?.weight ?? 2.0);
       expect(config.timeouts.weight).toBe(PLAYWRIGHT_EMBEDDING_DEFAULTS.timeouts!.weight);
       expect(config.assertions.weight).toBe(PLAYWRIGHT_EMBEDDING_DEFAULTS.assertions!.weight);
     });

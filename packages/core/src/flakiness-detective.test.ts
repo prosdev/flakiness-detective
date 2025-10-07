@@ -2,13 +2,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { FlakinessDetective, createFlakinessDetective } from './flakiness-detective';
 import { DataAdapter } from './types/data-adapter';
 import { EmbeddingProvider } from './embedding/embedding-provider';
-import { TestFailure, FailureCluster, EmbeddedFailure } from './types';
+import { TestFailure, FailureCluster } from './types';
 
 // Setup mocks at the top of the file, without referencing variable declarations
 vi.mock('./embedding/embedding-provider', async () => {
   // Use a local function inside the factory to avoid hoisting issues
   return {
-    createRichEmbeddingContext: vi.fn((title, error, metadata) => {
+    createRichEmbeddingContext: vi.fn((title, error, _metadata) => {
       return `${title || 'Unknown Test'}: ${error || 'Unknown Error'}`;
     }),
     EmbeddingProvider: vi.fn()
@@ -64,10 +64,10 @@ const mockExtractPatterns = vi.mocked(patternDetection.extractPatterns);
 const mockClusterFailures = vi.mocked(clusteringModule.clusterFailures);
 
 describe('FlakinessDetective', () => {
-  let mockDataAdapter: any;
-  let mockEmbeddingProvider: any;
+  let mockDataAdapter: unknown;
+  let mockEmbeddingProvider: unknown;
   let detective: FlakinessDetective;
-  let consoleSpy: any;
+  let consoleSpy: unknown;
   
   // Sample test data
   const sampleFailures: TestFailure[] = [
@@ -148,7 +148,7 @@ describe('FlakinessDetective', () => {
       const defaultDetective = new FlakinessDetective(mockDataAdapter, mockEmbeddingProvider);
       
       // Access private config (for testing only)
-      const config = (defaultDetective as any).config;
+      const config = (defaultDetective as unknown as { config: FlakinessDetectiveConfig }).config;
       
       expect(config.timeWindow.days).toBe(7);
       expect(config.clustering.epsilon).toBe(0.3);
@@ -168,7 +168,7 @@ describe('FlakinessDetective', () => {
       );
       
       // Access private config (for testing only)
-      const config = (customDetective as any).config;
+      const config = (customDetective as unknown as { config: FlakinessDetectiveConfig }).config;
       
       expect(config.timeWindow.days).toBe(14);
       expect(config.clustering.epsilon).toBe(0.5);
@@ -187,7 +187,7 @@ describe('FlakinessDetective', () => {
       );
       
       // Access private config (for testing only)
-      const config = (customDetective as any).config;
+      const config = (customDetective as unknown as { config: FlakinessDetectiveConfig }).config;
       
       expect(config.timeWindow.days).toBe(7); // Default
       expect(config.clustering.epsilon).toBe(0.5); // Custom
@@ -306,7 +306,7 @@ describe('createFlakinessDetective', () => {
     const detective = createFlakinessDetective(mockDataAdapter, mockEmbeddingProvider, mockConfig);
     
     // We can't directly assert on constructor calls, but we can check the instance config
-    const config = (detective as any).config;
+    const config = (detective as unknown).config;
     expect(config.timeWindow.days).toBe(14);
   });
 });

@@ -1,3 +1,5 @@
+// Google Cloud integration adapters for Flakiness Detective
+
 import {
   createFlakinessDetective,
   FlakinessDetectiveConfig,

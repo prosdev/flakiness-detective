@@ -105,14 +105,14 @@ export class FileSystemAdapter implements DataAdapter {
       const clusterMap = new Map<string, FailureCluster>();
       
       // Add existing clusters to map
-      existingClusters.forEach(cluster => {
+      for (const cluster of existingClusters) {
         clusterMap.set(cluster.id, cluster);
-      });
+      }
       
       // Add or replace with new clusters
-      clusters.forEach(cluster => {
+      for (const cluster of clusters) {
         clusterMap.set(cluster.id, cluster);
-      });
+      }
       
       // Convert map back to array
       const mergedClusters = Array.from(clusterMap.values());
@@ -178,14 +178,14 @@ export class FileSystemAdapter implements DataAdapter {
       const failureMap = new Map<string, TestFailure>();
       
       // Add existing failures to map
-      existingFailures.forEach(failure => {
+      for (const failure of existingFailures) {
         failureMap.set(failure.id, failure);
-      });
+      }
       
       // Add or replace with new failures
-      failures.forEach(failure => {
+      for (const failure of failures) {
         failureMap.set(failure.id, failure);
-      });
+      }
       
       // Convert map back to array
       const mergedFailures = Array.from(failureMap.values());

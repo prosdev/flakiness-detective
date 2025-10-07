@@ -37,7 +37,7 @@ export interface DataAdapterConfig {
   connectionString?: string;
   path?: string;
   // Additional adapter-specific options
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**

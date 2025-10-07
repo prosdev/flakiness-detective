@@ -55,14 +55,14 @@ export class InMemoryAdapter implements DataAdapter {
     const clusterMap = new Map<string, FailureCluster>();
     
     // Add existing clusters to map
-    this.clusters.forEach(cluster => {
+    for (const cluster of this.clusters) {
       clusterMap.set(cluster.id, cluster);
-    });
+    }
     
     // Add or replace with new clusters
-    clusters.forEach(cluster => {
+    for (const cluster of clusters) {
       clusterMap.set(cluster.id, cluster);
-    });
+    }
     
     // Update clusters array
     this.clusters = Array.from(clusterMap.values());
@@ -90,14 +90,14 @@ export class InMemoryAdapter implements DataAdapter {
     const failureMap = new Map<string, TestFailure>();
     
     // Add existing failures to map
-    this.failures.forEach(failure => {
+    for (const failure of this.failures) {
       failureMap.set(failure.id, failure);
-    });
+    }
     
     // Add or replace with new failures
-    failures.forEach(failure => {
+    for (const failure of failures) {
       failureMap.set(failure.id, failure);
-    });
+    }
     
     // Update failures array
     this.failures = Array.from(failureMap.values());

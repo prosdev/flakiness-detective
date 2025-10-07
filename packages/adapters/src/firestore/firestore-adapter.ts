@@ -91,8 +91,7 @@ export class FirestoreAdapter implements DataAdapter {
         }
       } catch (error) {
         throw new Error(
-          `Failed to initialize Firestore: ${error}\n` +
-          'Make sure firebase-admin is installed: npm install firebase-admin'
+          `Failed to initialize Firestore: ${error}\nMake sure firebase-admin is installed: npm install firebase-admin`
         );
       }
     }
@@ -121,7 +120,7 @@ export class FirestoreAdapter implements DataAdapter {
         const documents = await this.customQueryFn(this.db, this.failuresCollection, days);
         
         // Process results from custom query
-        documents.forEach((doc: any) => {
+        for (const doc of documents) {
           const data = doc.data ? doc.data() : doc;
           
           // Handle Firestore timestamps
@@ -132,7 +131,7 @@ export class FirestoreAdapter implements DataAdapter {
           // Map Firestore document to TestFailure
           const failure: TestFailure = this.mapDocumentToFailure(doc.id || data.id, data, timestamp);
           failures.push(failure);
-        });
+        }
       } else {
         // Default query logic
         // Calculate cutoff date
@@ -152,7 +151,7 @@ export class FirestoreAdapter implements DataAdapter {
         const snapshot = await query.get();
         
         // Process results from default query
-        snapshot.forEach((doc: any) => {
+        for (const doc of snapshot.docs) {
           const data = doc.data();
           
           // Handle Firestore timestamps
@@ -163,7 +162,7 @@ export class FirestoreAdapter implements DataAdapter {
           // Map Firestore document to TestFailure
           const failure: TestFailure = this.mapDocumentToFailure(doc.id, data, timestamp);
           failures.push(failure);
-        });
+        }
       }
       
       return failures;
@@ -184,7 +183,7 @@ export class FirestoreAdapter implements DataAdapter {
       const timestamp = new Date();
       
       // Process each cluster
-      clusters.forEach((cluster, index) => {
+      for (const [index, cluster] of clusters.entries()) {
         // Create a document reference
         const docId = cluster.id || `cluster-${Date.now()}-${index}`;
         const docRef = this.db.collection(this.clustersCollection).doc(docId);
@@ -199,7 +198,7 @@ export class FirestoreAdapter implements DataAdapter {
         
         // Add to batch
         batch.set(docRef, clusterData, { merge: true });
-      });
+      }
       
       // Commit the batch
       await batch.commit();
@@ -231,7 +230,7 @@ export class FirestoreAdapter implements DataAdapter {
       // Process results
       const clusters: FailureCluster[] = [];
       
-      snapshot.forEach((doc: any) => {
+      for (const doc of snapshot.docs) {
         const data = doc.data();
         
         // Ensure all required fields are present
@@ -262,7 +261,7 @@ export class FirestoreAdapter implements DataAdapter {
         };
         
         clusters.push(cluster);
-      });
+      }
       
       return clusters;
     } catch (error) {
@@ -281,7 +280,7 @@ export class FirestoreAdapter implements DataAdapter {
       const batch = this.db.batch();
       
       // Process each failure
-      failures.forEach(failure => {
+      for (const failure of failures) {
         // Create a document reference
         const docId = failure.id || `failure-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
         const docRef = this.db.collection(this.failuresCollection).doc(docId);
@@ -298,7 +297,7 @@ export class FirestoreAdapter implements DataAdapter {
         
         // Add to batch
         batch.set(docRef, failureData, { merge: true });
-      });
+      }
       
       // Commit the batch
       await batch.commit();
@@ -320,11 +319,10 @@ export class FirestoreAdapter implements DataAdapter {
     if (typeof message !== 'string') {
       // If it's an object with a toString method, use that
       if (message && typeof message.toString === 'function') {
-        message = message.toString();
-      } else {
-        // Otherwise, return empty array
-        return [];
+        return this.extractErrorSnippets(message.toString());
       }
+      // Otherwise, return empty array
+      return [];
     }
     
     const lines = message.split('\n');

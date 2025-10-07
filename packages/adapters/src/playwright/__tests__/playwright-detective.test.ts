@@ -1,3 +1,4 @@
+// Tests for PlaywrightDetective functionality
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PlaywrightFlakinessDetective, createPlaywrightFlakinessDetective, PLAYWRIGHT_DEFAULTS } from '../playwright-detective';
 import { PlaywrightAdapter } from '../playwright-adapter';

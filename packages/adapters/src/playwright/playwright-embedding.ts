@@ -56,7 +56,7 @@ export function createPlaywrightEmbeddingContext(
 	const contextElements: string[] = [`Test: ${failure.testTitle}`];
 
 	// Add metadata elements if available
-	const metadata = failure.metadata as PlaywrightFailureMetadata;
+	const metadata = failure.metadata as unknown as PlaywrightFailureMetadata;
 
 	// Add project information
 	if (metadata.projectName) {
