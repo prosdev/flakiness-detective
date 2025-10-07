@@ -29,42 +29,20 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      # Build packages in order
-      - name: Build Core Package
+      # Use turbo to build all packages in the correct dependency order
+      - name: Build Packages
+        run: pnpm build
+        
+      # Verify build results
+      - name: Verify Build Outputs
         run: |
-          echo "Building core package..."
-          cd packages/core
-          rm -rf dist
-          pnpm run build
-          echo "Files generated in core package:"
-          find dist -type f | sort || echo "No files found in dist directory"
+          echo "Checking core package dist directory:"
+          find packages/core/dist -type f | sort || echo "Core package dist not found"
+          
+          echo "Checking adapters package dist directory:"
+          find packages/adapters/dist -type f | sort || echo "Adapters package dist not found"
 
-      # Build the adapters package next which depends on core
-      - name: Build Adapters Package
-        run: |
-          echo "Building adapters package..."
-          cd packages/adapters
-          pnpm build
-
-      - name: Build Visualization Package
-        run: |
-          echo "Building visualization package..."
-          cd packages/visualization
-          pnpm build
-
-      - name: Build Meta Package
-        run: |
-          echo "Building meta package..."
-          cd packages/meta
-          pnpm build
-
-      - name: Build Demo Package
-        run: |
-          echo "Building demo package..."
-          cd packages/demo
-          pnpm build
-
-  test:
+  lint-and-test:
     name: Lint and Test
     needs: build
     runs-on: ubuntu-latest
@@ -87,7 +65,7 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      # Run lint, typecheck, and tests after building
+      # Run lint, typecheck, and tests
       - name: Lint
         run: pnpm lint
 
