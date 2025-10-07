@@ -35,9 +35,29 @@ jobs:
           cd packages/core
           pnpm build
 
-      # Build remaining packages, excluding core which is already built
-      - name: Build Remaining Packages
-        run: pnpm build --filter=!@flakiness-detective/core
+      # Build the adapters package next which depends on core
+      - name: Build Adapters Package
+        run: |
+          cd packages/adapters
+          pnpm build
+          
+      - name: Build Visualization Package
+        run: |
+          echo "Building visualization package..."
+          cd packages/visualization
+          pnpm build
+
+      - name: Build Meta Package
+        run: |
+          echo "Building meta package..."
+          cd packages/meta
+          pnpm build
+
+      - name: Build Demo Package
+        run: |
+          echo "Building demo package..."
+          cd packages/demo
+          pnpm build
 
   test:
     name: Lint and Test
