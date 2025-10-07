@@ -151,17 +151,35 @@ export class FirestoreAdapter implements DataAdapter {
         const snapshot = await query.get();
         
         // Process results from default query
-        for (const doc of snapshot.docs) {
-          const data = doc.data();
-          
-          // Handle Firestore timestamps
-          const timestamp = data.timestamp instanceof Date ? 
-            data.timestamp.toISOString() : 
-            (data.timestamp?.toDate ? data.timestamp.toDate().toISOString() : new Date().toISOString());
-          
-          // Map Firestore document to TestFailure
-          const failure: TestFailure = this.mapDocumentToFailure(doc.id, data, timestamp);
-          failures.push(failure);
+        // Handle both array-like docs (modern Firestore) and forEach pattern (tests and older versions)
+        if (snapshot.docs) {
+          // Modern Firestore returns array of docs
+          for (const doc of snapshot.docs) {
+            const data = doc.data();
+            
+            // Handle Firestore timestamps
+            const timestamp = data.timestamp instanceof Date ? 
+              data.timestamp.toISOString() : 
+              (data.timestamp?.toDate ? data.timestamp.toDate().toISOString() : new Date().toISOString());
+            
+            // Map Firestore document to TestFailure
+            const failure: TestFailure = this.mapDocumentToFailure(doc.id, data, timestamp);
+            failures.push(failure);
+          }
+        } else if (typeof snapshot.forEach === 'function') {
+          // Older pattern or test mocks using forEach
+          snapshot.forEach((doc: any) => {
+            const data = doc.data();
+            
+            // Handle Firestore timestamps
+            const timestamp = data.timestamp instanceof Date ? 
+              data.timestamp.toISOString() : 
+              (data.timestamp?.toDate ? data.timestamp.toDate().toISOString() : new Date().toISOString());
+            
+            // Map Firestore document to TestFailure
+            const failure: TestFailure = this.mapDocumentToFailure(doc.id, data, timestamp);
+            failures.push(failure);
+          });
         }
       }
       
@@ -230,37 +248,75 @@ export class FirestoreAdapter implements DataAdapter {
       // Process results
       const clusters: FailureCluster[] = [];
       
-      for (const doc of snapshot.docs) {
-        const data = doc.data();
-        
-        // Ensure all required fields are present
-        const cluster: FailureCluster = {
-          id: doc.id,
-          title: data.title || 'Unknown Cluster',
-          count: data.count || 0,
-          testId: data.testId || '',
-          testTitle: data.testTitle || 'Unknown Test',
-          timestamp: data.timestamp || new Date().toISOString(),
+      // Handle both array-like docs (modern Firestore) and forEach pattern (tests and older versions)
+      if (snapshot.docs) {
+        // Modern Firestore returns array of docs
+        for (const doc of snapshot.docs) {
+          const data = doc.data();
           
-          // Pattern analysis
-          commonFilePaths: data.commonFilePaths || [],
-          commonLineNumbers: data.commonLineNumbers || [],
-          commonCodeSnippets: data.commonCodeSnippets || [],
-          failurePattern: data.failurePattern || '',
+          // Ensure all required fields are present
+          const cluster: FailureCluster = {
+            id: doc.id,
+            title: data.title || 'Unknown Cluster',
+            count: data.count || 0,
+            testId: data.testId || '',
+            testTitle: data.testTitle || 'Unknown Test',
+            timestamp: data.timestamp || new Date().toISOString(),
+            
+            // Pattern analysis
+            commonFilePaths: data.commonFilePaths || [],
+            commonLineNumbers: data.commonLineNumbers || [],
+            commonCodeSnippets: data.commonCodeSnippets || [],
+            failurePattern: data.failurePattern || '',
+            
+            // Framework-specific patterns
+            commonLocators: data.commonLocators || [],
+            commonMatchers: data.commonMatchers || [],
+            commonTimeouts: data.commonTimeouts || [],
+            assertionPattern: data.assertionPattern || '',
+            
+            // Failures in this cluster
+            failureIds: data.failureIds || [],
+            failureTimestamps: data.failureTimestamps || [],
+            errorMessages: data.errorMessages || []
+          };
           
-          // Framework-specific patterns
-          commonLocators: data.commonLocators || [],
-          commonMatchers: data.commonMatchers || [],
-          commonTimeouts: data.commonTimeouts || [],
-          assertionPattern: data.assertionPattern || '',
+          clusters.push(cluster);
+        }
+      } else if (typeof snapshot.forEach === 'function') {
+        // Older pattern or test mocks using forEach
+        snapshot.forEach((doc: any) => {
+          const data = doc.data();
           
-          // Failures in this cluster
-          failureIds: data.failureIds || [],
-          failureTimestamps: data.failureTimestamps || [],
-          errorMessages: data.errorMessages || []
-        };
-        
-        clusters.push(cluster);
+          // Ensure all required fields are present
+          const cluster: FailureCluster = {
+            id: doc.id,
+            title: data.title || 'Unknown Cluster',
+            count: data.count || 0,
+            testId: data.testId || '',
+            testTitle: data.testTitle || 'Unknown Test',
+            timestamp: data.timestamp || new Date().toISOString(),
+            
+            // Pattern analysis
+            commonFilePaths: data.commonFilePaths || [],
+            commonLineNumbers: data.commonLineNumbers || [],
+            commonCodeSnippets: data.commonCodeSnippets || [],
+            failurePattern: data.failurePattern || '',
+            
+            // Framework-specific patterns
+            commonLocators: data.commonLocators || [],
+            commonMatchers: data.commonMatchers || [],
+            commonTimeouts: data.commonTimeouts || [],
+            assertionPattern: data.assertionPattern || '',
+            
+            // Failures in this cluster
+            failureIds: data.failureIds || [],
+            failureTimestamps: data.failureTimestamps || [],
+            errorMessages: data.errorMessages || []
+          };
+          
+          clusters.push(cluster);
+        });
       }
       
       return clusters;

@@ -23,7 +23,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --declaration",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "biome lint ./src",

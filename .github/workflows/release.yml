@@ -1,15 +1,18 @@
 name: Release
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["CI"]
+    branches: [main]
+    types:
+      - completed
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   release:
     name: Release
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -31,6 +34,87 @@ jobs:
 
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
+
+      # Run lint, typecheck, and tests first before building
+      - name: Lint
+        run: pnpm lint
+
+      - name: TypeCheck
+        run: pnpm typecheck
+
+      - name: Test
+        run: pnpm test
+
+      # Build packages sequentially to ensure proper declaration generation
+      - name: Build Core Package First
+        run: |
+          echo "Building core package..."
+          cd packages/core
+          
+          # Ensure the dist directory exists
+          mkdir -p dist
+          
+          # Run TypeScript compiler with explicit output of declarations
+          echo "Running TypeScript compiler with declaration output..."
+          npx tsc --declaration --outDir ./dist
+          
+          # Check if dist files were created
+          echo "Core build completed, checking output..."
+          ls -la dist
+          
+          # Verify declarations were created
+          if [ -f "dist/index.d.ts" ]; then
+            echo "✅ Core build successful: declarations generated"
+          else
+            echo "❌ Core build failed: declarations missing"
+            exit 1
+          fi
+          
+          cd ../..
+        
+      - name: Build Adapters Package
+        run: |
+          echo "Starting adapters build..."
+          cd packages/adapters
+          
+          # Ensure the dist directory exists
+          mkdir -p dist
+          
+          # Run TypeScript compiler with explicit output of declarations
+          echo "Running TypeScript compiler with declaration output..."
+          npx tsc --declaration --outDir ./dist
+          
+          # Check if dist files were created
+          echo "Adapters build completed, checking output..."
+          ls -la dist
+          
+          # Verify declarations were created
+          if [ -f "dist/index.d.ts" ]; then
+            echo "✅ Adapters build successful: declarations generated"
+          else
+            echo "❌ Adapters build failed: declarations missing"
+            exit 1
+          fi
+          
+          cd ../..
+
+      - name: Build Visualization Package
+        run: |
+          echo "Building visualization package..."
+          cd packages/visualization && pnpm build
+          cd ../..
+        
+      - name: Build Meta Package
+        run: |
+          echo "Building meta package..."
+          cd packages/meta && pnpm build
+          cd ../..
+          
+      - name: Build Demo Package
+        run: |
+          echo "Building demo package..."
+          cd packages/demo && pnpm build
+          cd ../..
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
