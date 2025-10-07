@@ -1,0 +1,59 @@
+{
+  "name": "flakiness-detective",
+  "version": "0.2.0",
+  "description": "AI-powered test flakiness detection and analysis tool",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./core": {
+      "types": "./node_modules/@flakiness-detective/core/dist/index.d.ts",
+      "import": "./node_modules/@flakiness-detective/core/dist/index.js",
+      "require": "./node_modules/@flakiness-detective/core/dist/index.js"
+    },
+    "./adapters": {
+      "types": "./node_modules/@flakiness-detective/adapters/dist/index.d.ts",
+      "import": "./node_modules/@flakiness-detective/adapters/dist/index.js",
+      "require": "./node_modules/@flakiness-detective/adapters/dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rimraf dist",
+    "prepare": "husky"
+  },
+  "author": "Your Name",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prosdev/flakiness-detective.git",
+    "directory": "packages/meta"
+  },
+  "keywords": [
+    "testing",
+    "flakiness",
+    "detection",
+    "ai",
+    "test-automation",
+    "playwright"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@flakiness-detective/core": "^0.2.0",
+    "@flakiness-detective/adapters": "^0.2.0"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.5",
+    "typescript": "^5.3.3"
+  }
+}

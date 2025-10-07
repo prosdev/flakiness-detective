@@ -313,13 +313,24 @@ export class FirestoreAdapter implements DataAdapter {
    * @param message Error message
    * @returns Array of error snippets
    */
-  private extractErrorSnippets(message: string): string[] {
+  private extractErrorSnippets(message: string | any): string[] {
     if (!message) return [];
+    
+    // Handle non-string messages
+    if (typeof message !== 'string') {
+      // If it's an object with a toString method, use that
+      if (message && typeof message.toString === 'function') {
+        message = message.toString();
+      } else {
+        // Otherwise, return empty array
+        return [];
+      }
+    }
     
     const lines = message.split('\n');
     
     // Look for code snippets (lines with ">" at the beginning)
-    const codeSnippets = lines.filter(line => line.trim().startsWith('>'));
+    const codeSnippets = lines.filter((line: string) => line.trim().startsWith('>'));
     
     return codeSnippets.length > 0 ? codeSnippets : [];
   }

@@ -1,6 +1,6 @@
 {
   "name": "@flakiness-detective/adapters",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Data source adapters for flakiness detection",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -31,9 +31,27 @@
     "clean": "rimraf dist"
   },
   "author": "Your Name",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prosdev/flakiness-detective.git",
+    "directory": "packages/adapters"
+  },
+  "keywords": [
+    "testing",
+    "flakiness",
+    "detection",
+    "ai",
+    "test-automation",
+    "playwright",
+    "firestore",
+    "google-ai"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "license": "MIT",
   "dependencies": {
-    "@flakiness-detective/core": "workspace:*"
+    "@flakiness-detective/core": "^0.2.0"
   },
   "peerDependencies": {
     "@google/generative-ai": "^0.1.0",

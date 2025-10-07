@@ -9,12 +9,12 @@ try {
 }
 import { join } from 'path';
 import { existsSync } from 'fs';
-import { 
-  createGoogleCloudDetective, 
+import {
+  createGoogleCloudDetective,
   createGooglePlaywrightDetective,
-  createLyticsCompatibleDetective, 
-  PlaywrightTestResult 
-} from '@flakiness-detective/adapters';
+  createSimplifiedDetective,
+  PlaywrightTestResult,
+} from "@flakiness-detective/adapters";
 
 // Load environment variables from .env file if it exists
 const envPath = join(__dirname, '../../../.env');
@@ -259,36 +259,42 @@ async function runGooglePlaywrightDemo() {
 async function runLyticsCompatibleDemo() {
   // Check for required environment variables
   if (!process.env.GOOGLE_CLOUD_PROJECT_ID || !process.env.GOOGLE_API_KEY) {
-    console.log('🛑 Lytics demo skipped - missing environment variables');
-    console.log('Required variables:');
-    console.log('- GOOGLE_CLOUD_PROJECT_ID: Your Google Cloud project ID');
-    console.log('- GOOGLE_API_KEY: Your Google AI API key');
-    console.log('\nCreate a .env file with these variables to run the demo');
+    console.log("🛑 Lytics demo skipped - missing environment variables");
+    console.log("Required variables:");
+    console.log("- GOOGLE_CLOUD_PROJECT_ID: Your Google Cloud project ID");
+    console.log("- GOOGLE_API_KEY: Your Google AI API key");
+    console.log("\nCreate a .env file with these variables to run the demo");
     return;
   }
 
-  console.log('🔄 Lytics E2E Dashboard Compatibility Demo');
-  console.log('------------------------------------------');
-  
-  // Create a detective with Lytics-compatible configuration
-  const detective = createLyticsCompatibleDetective({
-    googleProjectId: process.env.GOOGLE_CLOUD_PROJECT_ID,
-    googleApiKey: process.env.GOOGLE_API_KEY,
-    failuresCollection: 'individual_test_runs',
-    clustersCollection: 'flaky_clusters',
+  console.log("🔄 Lytics E2E Dashboard Compatibility Demo");
+  console.log("------------------------------------------");
+
+  // Create a detective with simplified configuration
+  const detective = createSimplifiedDetective({
+    projectId: process.env.GOOGLE_CLOUD_PROJECT_ID,
+    apiKey: process.env.GOOGLE_API_KEY,
+    failuresCollection: "individual_test_runs",
+    clustersCollection: "flaky_clusters",
     timeWindowDays: 7,
-    failureStatusFilter: 'failed'
+    failureStatusFilter: "failed",
   });
-  
-  console.log('Lytics-compatible detective created with the following configuration:');
-  console.log('- Google Cloud project: ' + process.env.GOOGLE_CLOUD_PROJECT_ID);
-  console.log('- Failures collection: individual_test_runs');
-  console.log('- Clusters collection: flaky_clusters');
-  console.log('- Time window: 7 days');
-  console.log('- Status filter: failed\n');
-  
-  console.log('This configuration matches the custom implementation in Lytics E2E Dashboard');
-  console.log('and can be used as a drop-in replacement for the existing code.\n');
+
+  console.log(
+    "Lytics-compatible detective created with the following configuration:"
+  );
+  console.log("- Google Cloud project: " + process.env.GOOGLE_CLOUD_PROJECT_ID);
+  console.log("- Failures collection: individual_test_runs");
+  console.log("- Clusters collection: flaky_clusters");
+  console.log("- Time window: 7 days");
+  console.log("- Status filter: failed\n");
+
+  console.log(
+    "This configuration matches the custom implementation in Lytics E2E Dashboard"
+  );
+  console.log(
+    "and can be used as a drop-in replacement for the existing code.\n"
+  );
 }
 
 /**
