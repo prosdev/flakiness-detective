@@ -12,6 +12,7 @@
     "test:watch": "vitest",
     "test:specific": "vitest run --testNamePattern",
     "test:coverage": "vitest run --coverage",
+    "typecheck": "turbo run typecheck",
     "lint": "turbo run lint",
     "format": "turbo run format",
     "clean": "turbo run clean",

@@ -28,6 +28,7 @@
   "scripts": {
     "build": "tsc",
     "clean": "rimraf dist",
+    "typecheck": "tsc --noEmit",
     "prepare": "husky"
   },
   "author": "Your Name",
