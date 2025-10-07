@@ -45,7 +45,13 @@ jobs:
           
           # Run TypeScript with explicit parameters and diagnostics
           echo "Building with explicit TypeScript parameters..."
-          pnpm exec tsc --project tsconfig.json --declaration --outDir ./dist --rootDir ./src --diagnostics
+          pnpm exec tsc --project tsconfig.json --declaration --outDir ./dist --rootDir ./src --diagnostics --noEmit false --listEmittedFiles
+          
+          # If compilation succeeded but no files were generated, try building with the build script
+          if [ ! "$(ls -A dist)" ]; then
+            echo "TypeScript compiler succeeded but no files were emitted, trying with build script..."
+            pnpm build
+          fi
           
           # Check if build was successful
           echo "Contents of dist directory:"
