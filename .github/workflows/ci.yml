@@ -29,9 +29,10 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build Core Package First
+      # Build the packages in the correct order
+      - name: Build Core Package
         run: cd packages/core && pnpm build
-
+        
       - name: Build All Packages
         run: pnpm build
 

@@ -6,12 +6,11 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
-    "//@flakiness-detective/adapters#build": {
-      "dependsOn": ["@flakiness-detective/core#build"]
+    "dev": {
+      "cache": false,
+      "persistent": true
     },
-    "//@flakiness-detective/meta#build": {
-      "dependsOn": ["@flakiness-detective/core#build", "@flakiness-detective/adapters#build"]
-    },
+    "clean": {},
     "test": {
       "dependsOn": ["build"],
       "inputs": ["src/**/*.tsx", "src/**/*.ts", "test/**/*.ts", "test/**/*.tsx"]
@@ -23,16 +22,13 @@
       "persistent": true
     },
     "typecheck": {
+      "dependsOn": ["build"],
       "inputs": ["src/**/*.tsx", "src/**/*.ts", "test/**/*.ts", "test/**/*.tsx"],
       "outputs": []
     },
-    "//@flakiness-detective/adapters#typecheck": {
-      "dependsOn": ["@flakiness-detective/core#build"]
+    "lint": {
+      "dependsOn": ["build"]
     },
-    "//@flakiness-detective/meta#typecheck": {
-      "dependsOn": ["@flakiness-detective/core#build", "@flakiness-detective/adapters#build"]
-    },
-    "lint": {},
     "format": {},
     "clean": {},
     "dev": {

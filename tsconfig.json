@@ -8,8 +8,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist",
-    "rootDir": "./src",
+    "composite": true,
     "baseUrl": ".",
     "paths": {
       "@flakiness-detective/core": ["./packages/core/src/index.ts"],
@@ -18,5 +17,13 @@
       "@flakiness-detective/demo": ["./packages/demo/src/index.ts"]
     }
   },
+  "files": [],
+  "references": [
+    { "path": "./packages/core" },
+    { "path": "./packages/adapters" },
+    { "path": "./packages/visualization" },
+    { "path": "./packages/demo" },
+    { "path": "./packages/meta" }
+  ],
   "exclude": ["node_modules", "dist", "**/*.test.ts"]
 }
