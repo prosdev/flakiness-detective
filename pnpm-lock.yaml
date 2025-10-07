@@ -42,7 +42,7 @@ importers:
   packages/adapters:
     dependencies:
       '@flakiness-detective/core':
-        specifier: ^0.1.2
+        specifier: ^0.2.0
         version: link:../core
       '@google/generative-ai':
         specifier: ^0.1.0
@@ -130,10 +130,10 @@ importers:
   packages/meta:
     dependencies:
       '@flakiness-detective/adapters':
-        specifier: ^0.1.2
+        specifier: ^0.2.0
         version: link:../adapters
       '@flakiness-detective/core':
-        specifier: ^0.1.2
+        specifier: ^0.2.0
         version: link:../core
     devDependencies:
       rimraf:
