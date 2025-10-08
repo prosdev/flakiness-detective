@@ -29,9 +29,11 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      # Use turbo to build all packages in the correct dependency order
+      # Build packages with turbo - similar to Next.js approach
       - name: Build Packages
-        run: pnpm build
+        run: |
+          echo "Building packages with Turborepo..."
+          pnpm dlx turbo run build --summarize
         
       # Verify build results
       - name: Verify Build Outputs
